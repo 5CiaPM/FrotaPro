@@ -1,0 +1,20 @@
+{
+  "name": "frotapro",
+  "version": "1.0.0",
+  "description": "Sistema de Gest\u00e3o de Frota",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "express": "^4.22.3",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3"
+  },
+  "engines": {
+    "node": ">=22.5"
+  }
+}
