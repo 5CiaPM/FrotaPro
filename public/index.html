@@ -1,0 +1,153 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>FrotaPro – Gestão de Frota</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@600;700&display=swap">
+<style>
+:root{--bg:#f2f4f5;--card:#fff;--tx:#1b2228;--mut:#5c6b76;--pri:#f5a800;--pt:#1b2228;--side:#1d252c;--bd:#dde3e7;--ok:#2e8b57;--er:#d64545;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#12181d;--card:#1d252c;--tx:#e9eef1;--mut:#9aa8b2;--side:#0c1115;--bd:#2f3b44}}
+:root[data-theme=dark]{--bg:#12181d;--card:#1d252c;--tx:#e9eef1;--mut:#9aa8b2;--side:#0c1115;--bd:#2f3b44}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;font:14px/1.45 Barlow,system-ui,sans-serif;background:var(--bg);color:var(--tx)}
+h1,h2,h3{font-family:'Barlow Semi Condensed',Barlow,sans-serif;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+.btn{background:var(--pri);color:var(--pt);border:0;border-radius:6px;padding:8px 14px;cursor:pointer;font-weight:600}.btn.g{background:transparent;border:1px solid var(--bd);color:var(--tx)}.btn.r{background:var(--er);color:#fff}.btn.s{padding:4px 10px}
+:focus-visible{outline:2px solid var(--pri);outline-offset:2px}
+input,select,textarea{width:100%;padding:8px;border:1px solid var(--bd);border-radius:6px;background:var(--card)}
+label{display:block;font-size:12px;color:var(--mut);margin-bottom:2px}
+#login{min-height:100vh;display:grid;place-items:center;padding:16px;background:var(--side)}
+.box{background:var(--card);padding:28px;border-radius:8px;width:100%;max-width:380px;border-top:6px solid var(--pri)}
+#app{display:flex;min-height:100vh}
+aside{width:250px;background:var(--side);color:#c5d0d8;padding:14px;position:sticky;top:0;height:100vh;overflow:auto;flex:none}
+aside.hide{display:none}
+aside a{display:block;padding:7px 10px;border-radius:6px;color:inherit;cursor:pointer}aside a.on,aside a:hover{background:#ffffff1a;color:#fff}aside a.on{box-shadow:inset 3px 0 var(--pri)}
+.lane{border-top:3px dashed #f5a80099;margin:12px 0}
+.usr{display:flex;gap:10px;align-items:center}.av{width:44px;height:44px;border-radius:50%;background:var(--pri);color:var(--pt);display:grid;place-items:center;font-weight:700;flex:none}
+main{flex:1;min-width:0}
+header{display:flex;gap:10px;align-items:center;padding:10px 16px;background:var(--card);border-bottom:1px solid var(--bd);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+#view{padding:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:14px}.card .n{font:700 24px 'Barlow Semi Condensed',sans-serif;display:block}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-top:12px}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse}th,td{padding:8px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap}th{color:var(--mut);font-weight:600}
+.br{display:grid;grid-template-columns:96px 1fr 84px;gap:8px;align-items:center;margin:6px 0;font-size:12px}.br i{background:var(--bd);height:10px;border-radius:5px;overflow:hidden}.br b{display:block;height:100%;background:var(--pri)}
+.tag{padding:2px 8px;border-radius:10px;font-size:12px;background:var(--bd)}.bad{color:var(--er);font-weight:600}.mut{color:var(--mut)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+dialog{border:0;border-radius:10px;padding:18px;width:min(720px,94vw);max-height:92vh;background:var(--card);color:var(--tx)}dialog::backdrop{background:#000a}
+.fg{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;border:0;padding:0;margin:0}.wide{grid-column:1/-1}
+#gr{position:absolute;top:100%;left:0;right:0;background:var(--card);border:1px solid var(--bd);border-radius:6px;z-index:9}#gr a{display:block;padding:7px 10px;cursor:pointer}#gr a:hover{background:var(--bg)}
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--side);color:#fff;padding:10px 16px;border-radius:6px;z-index:99;border-left:4px solid var(--ok)}#toast.e{border-color:var(--er)}
+@media(max-width:800px){aside{position:fixed;z-index:9;left:-270px;height:100%;transition:left .2s}aside.open{left:0}aside.hide{display:block}}
+@media print{aside,header,.np{display:none}}
+</style></head><body>
+<div id="login"><form class="box" onsubmit="login(event)"><h1 style="font-size:30px">FrotaPro</h1><p class="mut">Gestão de frota, do cadastro ao custo por km.</p>
+<p><label>E-mail</label><input id="em" type="email" required autocomplete="username"></p><p><label>Senha</label><input id="pw" type="password" required autocomplete="current-password"></p>
+<p><label style="display:flex;gap:6px;align-items:center"><input id="rm" type="checkbox" style="width:auto"> Lembrar-me</label></p>
+<p id="le" class="bad" role="alert"></p><button class="btn" style="width:100%">Entrar</button>
+<p><a href="#" onclick="toast('Peça a um administrador para redefinir sua senha em Usuários.',1);return false">Esqueci minha senha</a></p>
+<p class="mut" style="font-size:12px">Demonstração: admin@frota.com / admin123 · gestor@frota.com / gestor123 · operador@frota.com / operador123 · consulta@frota.com / consulta123</p></form></div>
+<div id="app" hidden><aside id="sd"><div class="usr"><div class="av" id="av"></div><div><b id="un"></b><br><span class="mut" id="ur"></span></div></div><div class="lane"></div><nav id="nv"></nav><div class="lane"></div><a onclick="out()">Sair</a></aside>
+<main><header><button class="btn g s" onclick="tg()" aria-label="Menu">☰</button><div style="position:relative;flex:1;max-width:420px"><input id="gs" placeholder="Buscar placa, prefixo, condutor, OS, CNPJ, CPF…" oninput="gs(this.value)"><div id="gr" hidden></div></div><span style="flex:1"></span><button class="btn g s" onclick="bell()" aria-label="Notificações">🔔 <b id="bc">0</b></button></header><section id="view"></section></main></div>
+<dialog id="dlg"></dialog>
+<dialog id="cf"><form method="dialog"><p id="cfm"></p><button class="btn g" value="n">Cancelar</button> <button class="btn r" value="y">Confirmar</button></form></dialog>
+<div id="toast" hidden></div>
+<script>
+const $=s=>document.querySelector(s),K='frotapro_v1',esc=s=>String(s??'').replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';'),pad=n=>String(n).padStart(4,'0');
+const fmt={m:v=>(+v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}),d:v=>v?v.split('-').reverse().join('/'):'',n:v=>(+v||0).toLocaleString('pt-BR')};
+const ld=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const today=()=>ld(new Date()),addD=n=>{const d=new Date();d.setDate(d.getDate()+n);return ld(d)},days=d=>Math.round((new Date(d+'T00:00')-new Date(today()+'T00:00'))/864e5);
+let DB,me,Q={},fails=0,lock=0;
+async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+const save=()=>{};
+const lg=()=>{};
+const V=id=>DB.vehicles.find(x=>x.id==id),sum=(a,f)=>a.reduce((s,x)=>s+(+f(x)||0),0);
+const LB={vehicles:v=>v?`${v.plate} · ${v.prefix} · ${v.brand} ${v.model}`:'—',drivers:d=>d?d.name:'—',providers:p=>p?`${p.name} (${p.type})`:'—'};
+const cpfOk=s=>{s=s.replace(/\D/g,'');if(s.length!=11||/^(\d)\1+$/.test(s))return 0;for(let t=9;t<11;t++){let x=0;for(let i=0;i<t;i++)x+=s[i]*(t+1-i);if((x*10%11)%10!=s[t])return 0}return 1};
+const OSB=['Aberta','Aguardando aprovação','Aprovada'],OSA=['Em andamento','Aguardando peça','Aguardando veículo'];
+const ST={
+vehicles:{t:'Veículos',c:['plate','prefix','brand','model','km','status','licDue'],f:[['plate','Placa','t',0,1],['prefix','Prefixo','t',0,1],['brand','Marca','t',0,1],['model','Modelo','t',0,1],['year','Ano','n'],['fuel','Combustível','s',['Flex','Gasolina','Diesel','Etanol','Elétrico']],['km','KM atual','n',0,1],['status','Status','s',['Ativo','Em manutenção','Parado','Inativo'],1],['licDue','Venc. licenciamento','d'],['owner','Unidade/setor','t'],['obs','Observações','a']],
+chk:r=>!/^[A-Z]{3}-?\d[A-Z0-9]\d{2}$/.test(r.plate.toUpperCase())?'Placa inválida.':DB.vehicles.some(x=>x.id!=r.id&&x.plate==r.plate.toUpperCase())?'Placa já cadastrada.':DB.vehicles.some(x=>x.id!=r.id&&x.prefix==r.prefix)?'Prefixo já cadastrado.':''},
+drivers:{t:'Condutores',c:['name','cpf','cnh','cnhCat','cnhDue','status'],f:[['name','Nome completo','t',0,1],['cpf','CPF','t',0,1],['phone','Telefone','t'],['email','E-mail','t'],['cnh','Nº CNH','t',0,1],['cnhCat','Categoria','s',['A','B','C','D','E','AB']],['cnhDue','Validade da CNH','d',0,1],['status','Status','s',['Ativo','Inativo'],1],['vehicle','Veículo vinculado','r','vehicles'],['obs','Observações','a']],
+chk:r=>!cpfOk(r.cpf)?'CPF inválido.':r.email&&!/^\S+@\S+\.\S+$/.test(r.email)?'E-mail inválido.':''},
+orders:{t:'Ordens de Serviço',c:['#','vehicle','provider','type','status','endPrev','total'],f:[['vehicle','Veículo','r','vehicles',1],['provider','Prestador responsável','r','providers',1,p=>p.type!='Posto'],['type','Tipo de manutenção','s',['Corretiva','Preventiva','Preditiva'],1],['prio','Prioridade','s',['Baixa','Média','Alta','Urgente']],['status','Status','s',['Aberta','Aguardando aprovação','Aprovada','Em andamento','Aguardando peça','Aguardando veículo','Concluída','Cancelada'],1],['opened','Data de abertura','d'],['start','Início','d'],['endPrev','Previsão de término','d'],['endReal','Término real','d'],['kmOs','KM','n'],['req','Solicitante','t'],['service','Serviço a executar','a',0,1],['diag','Diagnóstico','a'],['done','Serviços realizados / peças','a'],['est','Valor estimado','m'],['labor','Mão de obra','m'],['partsV','Peças','m'],['other','Outros custos','m'],['disc','Desconto','m'],['total','Valor total (automático)','c'],['pay','Forma de pagamento','s',['PIX','Boleto','Cartão','Faturado']]],
+chk:r=>r.start&&r.endPrev&&r.endPrev<r.start?'A previsão de término é anterior ao início.':r.start&&r.endReal&&r.endReal<r.start?'O término real é anterior ao início.':r.status=='Concluída'&&(!r.endReal||!r.done||!r.kmOs)?'Para concluir, informe KM, serviços realizados e término real.':''},
+providers:{t:'Prestadores (oficinas, borracharias, auto elétricas, postos…)',c:['type','name','doc','phone','city','status'],f:[['type','Tipo','s',['Oficina','Borracharia','Auto elétrica','Posto','Outro'],1],['name','Razão social / nome','t',0,1],['doc','CNPJ/CPF','t',0,1],['phone','Telefone','t'],['email','E-mail','t'],['city','Cidade','t'],['services','Serviços / especialidades / bandeira','t'],['status','Status','s',['Ativo','Inativo'],1],['obs','Observações','a']],
+chk:r=>![11,14].includes(r.doc.replace(/\D/g,'').length)?'CNPJ/CPF inválido.':r.email&&!/^\S+@\S+\.\S+$/.test(r.email)?'E-mail inválido.':''},
+fuelings:{t:'Abastecimentos',c:['date','vehicle','provider','liters','price','total','kmF'],f:[['date','Data','d',0,1],['vehicle','Veículo','r','vehicles',1],['driver','Condutor','r','drivers'],['provider','Posto','r','providers',1,p=>p.type=='Posto'],['fuel','Combustível','s',['Gasolina','Etanol','Diesel','GNV']],['liters','Litros','n',0,1],['price','Valor por litro','m',0,1],['total','Valor total (automático)','c'],['kmF','KM no abastecimento','n',0,1],['note','Cupom/nota','t'],['pay','Pagamento','s',['Cartão frota','PIX','Dinheiro']]]},
+tires:{t:'Pneus',c:['code','brand','size','vehicle','pos','km','status'],f:[['code','Código','t',0,1],['brand','Marca','t'],['model','Modelo','t'],['size','Medida','t'],['dot','DOT','t'],['value','Valor','m'],['vehicle','Veículo','r','vehicles'],['pos','Posição','s',['Diant. esq.','Diant. dir.','Tras. esq.','Tras. dir.','Estepe']],['km','KM de instalação','n'],['status','Status','s',['Em estoque','Instalado','Em manutenção','Recapado','Descartado'],1]]},
+prev:{t:'Manutenção Preventiva',c:['vehicle','item','every','lastKm'],f:[['vehicle','Veículo','r','vehicles',1],['item','Item (ex.: troca de óleo)','t',0,1],['every','A cada (km)','n',0,1],['lastKm','KM da última execução','n',0,1]]},
+docs:{t:'Documentação',c:['doc','vehicle','number','due'],f:[['doc','Documento','s',['Licenciamento','CRLV','Inspeção','Vistoria','Outro'],1],['vehicle','Veículo','r','vehicles',1],['number','Número','t'],['issue','Emissão','d'],['due','Vencimento','d',0,1],['obs','Observações','a']]},
+fines:{t:'Multas e Infrações',c:['date','vehicle','driver','desc','value','due','status'],f:[['vehicle','Veículo','r','vehicles',1],['driver','Condutor','r','drivers'],['date','Data','d',0,1],['place','Local','t'],['orgao','Órgão autuador','t'],['auto','Nº do auto','t'],['desc','Descrição','t',0,1],['value','Valor','m',0,1],['due','Vencimento','d'],['points','Pontos','n'],['status','Status','s',['Em aberto','Paga','Recorrida'],1]]},
+insurance:{t:'Seguros',c:['vehicle','insurer','policy','due','value'],f:[['vehicle','Veículo','r','vehicles',1],['insurer','Seguradora','t',0,1],['policy','Nº da apólice','t',0,1],['start','Início','d'],['due','Vencimento','d',0,1],['value','Valor','m'],['coverage','Cobertura','t'],['deduct','Franquia','m']]},
+users:{t:'Usuários',c:['name','email','role','status'],f:[['name','Nome','t',0,1],['email','E-mail','t',0,1],['role','Perfil','s',['Administrador','Gestor','Operador','Consulta'],1],['status','Status','s',['Ativo','Inativo'],1],['pw','Senha (deixe vazio para manter)','p']],
+chk:r=>!/^\S+@\S+\.\S+$/.test(r.email)?'E-mail inválido.':DB.users.some(x=>x.id!=r.id&&x.email==r.email)?'E-mail já cadastrado.':''}};
+const NAV=[['dash','Dashboard'],['vehicles','Veículos'],['drivers','Condutores'],['orders','Ordens de Serviço'],['providers','Prestadores'],['fuelings','Abastecimentos'],['tires','Pneus'],['prev','Manutenção Preventiva'],['docs','Documentação'],['fines','Multas'],['insurance','Seguros'],['costs','Custos'],['reports','Relatórios'],['users','Usuários'],['audit','Auditoria'],['cfg','Configurações']];
+const can=a=>({Administrador:'vced',Gestor:'vced',Operador:'vce',Consulta:'v'})[me.role].includes(a);
+const tx=(f,r)=>{if(f[0]=='#')return'OS-'+pad(r.id);const v=r[f[0]],t=f[2];return t=='m'?fmt.m(v):t=='d'?fmt.d(v):t=='n'?fmt.n(v):t=='r'?LB[f[3]](DB[f[3]].find(x=>x.id==v)):v??''};
+const toast=(m,e)=>{const t=$('#toast');t.textContent=m;t.className=e?'e':'';t.hidden=0;clearTimeout(t.h);t.h=setTimeout(()=>t.hidden=1,3500)};
+const cf=m=>new Promise(ok=>{const d=$('#cf');$('#cfm').textContent=m;d.returnValue='';d.showModal();d.onclose=()=>ok(d.returnValue=='y')});
+const modal=h=>{const d=$('#dlg');d.innerHTML=h;d.showModal()};
+async function api(u,o={}){const r=await fetch('/api/'+u,{method:o.m||'GET',headers:{'Content-Type':'application/json','X-Requested-With':'frotapro'},body:o.b});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'Erro inesperado.');return j}
+function alerts(){const a=[],L=(t,x,m,b)=>a.push({t,x,m,b}),dd=d=>d<0?`vencido há ${-d} d`:`vence em ${d} d`;
+DB.vehicles.forEach(v=>v.licDue&&days(v.licDue)<=30&&L('Licenciamento',v.plate,dd(days(v.licDue)),days(v.licDue)<0));
+DB.drivers.forEach(d=>days(d.cnhDue)<=30&&L('CNH',d.name,dd(days(d.cnhDue)),days(d.cnhDue)<0));
+DB.insurance.forEach(s=>days(s.due)<=30&&L('Seguro',LB.vehicles(V(s.vehicle)),dd(days(s.due)),days(s.due)<0));
+DB.docs.forEach(s=>days(s.due)<=30&&L(s.doc,LB.vehicles(V(s.vehicle)),dd(days(s.due)),days(s.due)<0));
+DB.prev.forEach(p=>{const v=V(p.vehicle);if(!v)return;const r=+p.lastKm+ +p.every-v.km;if(r<=1000)L('Preventiva',v.plate+' – '+p.item,r<0?`atrasada ${fmt.n(-r)} km`:`faltam ${fmt.n(r)} km`,r<0)});
+DB.orders.forEach(o=>o.endPrev&&days(o.endPrev)<0&&!['Concluída','Cancelada'].includes(o.status)&&L('OS atrasada','OS-'+pad(o.id)+' '+LB.vehicles(V(o.vehicle)),`prazo há ${-days(o.endPrev)} d`,1));return a}
+const bars=(r,f=fmt.m)=>{const mx=Math.max(...r.map(x=>x[1]),1);return r.map(x=>`<div class=br><span>${esc(x[0])}</span><i><b style="width:${x[1]/mx*100}%"></b></i><em style="font-style:normal">${f(x[1])}</em></div>`).join('')||'<p class=mut>Sem dados.</p>'};
+function stats(){const kml={},cost={};DB.vehicles.forEach(v=>{const f=DB.fuelings.filter(x=>x.vehicle==v.id).sort((a,b)=>a.kmF-b.kmF),run=f.length?f[f.length-1].kmF-f[0].kmF:0,lit=sum(f.slice(1),x=>x.liters),man=sum(DB.orders.filter(o=>o.vehicle==v.id),o=>o.total),fu=sum(f,x=>x.total),se=sum(DB.insurance.filter(x=>x.vehicle==v.id),x=>x.value),mu=sum(DB.fines.filter(x=>x.vehicle==v.id),x=>x.value),t=man+fu+se+mu;cost[v.id]={v,man,fu,se,mu,t,kml:lit?run/lit:0,cpk:run?t/run:0,n:DB.orders.filter(o=>o.vehicle==v.id).length}});return cost}
+function dash(){const o=DB.orders,v=DB.vehicles,mo=today().slice(0,7),A=alerts(),C=stats(),n=(a,f)=>a.filter(f).length;
+const M=[...Array(6)].map((_,i)=>{const d=new Date();d.setDate(1);d.setMonth(d.getMonth()-5+i);return ld(d).slice(0,7)}),ml=k=>k.slice(5)+'/'+k.slice(2,4);
+const mm=sum(o.filter(x=>(x.opened||'').startsWith(mo)),x=>x.total),fm=sum(DB.fuelings.filter(x=>x.date.startsWith(mo)),x=>x.total);
+const cards=[['Veículos',v.length],['Ativos',n(v,x=>x.status=='Ativo')],['Em manutenção',n(v,x=>x.status=='Em manutenção')],['Parados',n(v,x=>x.status=='Parado')],['Condutores',DB.drivers.length],['OS abertas',n(o,x=>OSB.includes(x.status))],['OS em andamento',n(o,x=>OSA.includes(x.status))],['OS concluídas',n(o,x=>x.status=='Concluída')],['Alertas ativos',A.length],['Manutenção no mês',fmt.m(mm)],['Combustível no mês',fmt.m(fm)],['Custo médio/veículo',fmt.m(sum(Object.values(C),c=>c.t)/(v.length||1))]];
+const st={};v.forEach(x=>st[x.status]=(st[x.status]||0)+1);
+return`<div class="bar np"><h2 style="flex:1">Dashboard</h2>${can('c')?['vehicles|+ Novo veículo','drivers|+ Novo condutor','orders|+ Nova OS','fuelings|+ Novo abastecimento','providers|+ Novo prestador'].map(s=>`<button class="btn s" onclick="go('${s.split('|')[0]}',1)">${s.split('|')[1]}</button>`).join(''):''}</div>
+<div class=grid>${cards.map(c=>`<div class=card><span class=mut>${c[0]}</span><b class=n>${c[1]}</b></div>`).join('')}</div>
+<div class=cols><div class=card><h3>Alertas</h3>${A.map(a=>`<p><span class="${a.b?'bad':''}">${esc(a.t)}</span> · ${esc(a.x)} — <span class="${a.b?'bad':'mut'}">${a.m}</span></p>`).join('')||'<p class=mut>Nenhum alerta.</p>'}</div>
+<div class=card><h3>Status dos veículos</h3>${bars(Object.entries(st),fmt.n)}</div>
+<div class=card><h3>Manutenção por mês</h3>${bars(M.map(k=>[ml(k),sum(o.filter(x=>(x.opened||'').startsWith(k)),x=>x.total)]))}</div>
+<div class=card><h3>Combustível por mês</h3>${bars(M.map(k=>[ml(k),sum(DB.fuelings.filter(x=>x.date.startsWith(k)),x=>x.total)]))}</div>
+<div class=card><h3>Custo por veículo</h3>${bars(Object.values(C).map(c=>[c.v.prefix,c.t]))}</div>
+<div class=card><h3>Consumo médio (km/l)</h3>${bars(Object.values(C).map(c=>[c.v.prefix,c.kml]),x=>x.toFixed(1))}</div>
+<div class=card><h3>Manutenções por veículo</h3>${bars(Object.values(C).map(c=>[c.v.prefix,c.n]),fmt.n)}</div></div>`}
+function costs(){const C=Object.values(stats()),by={};DB.orders.forEach(o=>{const p=LB.providers(DB.providers.find(x=>x.id==o.provider));by[p]=(by[p]||0)+(+o.total||0)});
+return`<h2>Custos</h2><div class=grid style="margin:12px 0">${[['Combustível',sum(C,c=>c.fu)],['Manutenção',sum(C,c=>c.man)],['Seguros',sum(C,c=>c.se)],['Multas',sum(C,c=>c.mu)],['Total',sum(C,c=>c.t)]].map(c=>`<div class=card><span class=mut>${c[0]}</span><b class=n>${fmt.m(c[1])}</b></div>`).join('')}</div>
+<div class="card tw"><h3>Por veículo</h3><table><tr><th>Veículo<th>Manutenção<th>Combustível<th>Seguro<th>Multas<th>Total<th>R$/km<th>km/l</tr>${C.map(c=>`<tr><td>${esc(LB.vehicles(c.v))}<td>${fmt.m(c.man)}<td>${fmt.m(c.fu)}<td>${fmt.m(c.se)}<td>${fmt.m(c.mu)}<td><b>${fmt.m(c.t)}</b><td>${fmt.m(c.cpk)}<td>${c.kml.toFixed(1)}</tr>`).join('')}</table></div>
+<div class=card style="margin-top:12px"><h3>Custo de manutenção por prestador</h3>${bars(Object.entries(by))}</div>`}
+function reports(){return`<h2>Relatórios</h2><p class=mut>Abra o relatório, copie o CSV para o Excel ou use “Imprimir / PDF” em qualquer tela.</p><div class=grid>${Object.keys(ST).filter(m=>m!='users').map(m=>`<div class=card><b>${ST[m].t}</b><p><button class="btn s" onclick="csv('${m}')">Ver CSV</button></p></div>`).join('')}</div><p><button class="btn g" onclick="print()">Imprimir / PDF</button></p>`}
+function csv(m){const s=ST[m],c=s.c.map(k=>k=='#'?['#','Nº']:s.f.find(f=>f[0]==k)),q=v=>'"'+String(v).replace(/"/g,'""')+'"',t=[c.map(f=>q(f[1])).join(';'),...DB[m].map(r=>c.map(f=>q(tx(f,r))).join(';'))].join('\n');modal(`<h3>${s.t} — CSV</h3><textarea rows=12 readonly onfocus="this.select()">${esc(t)}</textarea><p><button class="btn" onclick="$('#dlg').close()">Fechar</button></p>`)}
+function lst(m){const s=ST[m];return`<p class=mut>Início / ${esc(s.t)}</p><div class="bar np"><h2 style="flex:1">${esc(s.t)}</h2><input placeholder="Buscar…" value="${esc(Q[m]||'')}" oninput="Q['${m}']=this.value;$('#tw').innerHTML=tbl('${m}')" style="max-width:220px">${can('c')?`<button class=btn onclick="op('${m}')">+ Novo</button>`:''}<button class="btn g" onclick="csv('${m}')">Exportar CSV</button></div><div id=tw class=tw>${tbl(m)}</div>`}
+function tbl(m){const s=ST[m],q=(Q[m]||'').toLowerCase(),c=s.c.map(k=>k=='#'?['#','Nº']:s.f.find(f=>f[0]==k)),R=DB[m].filter(r=>!q||c.map(f=>tx(f,r)).join(' ').toLowerCase().includes(q));
+return`<div class=card style="padding:0"><table><tr>${c.map(f=>`<th>${f[1]}`).join('')}<th></tr>${R.map(r=>`<tr>${c.map(f=>`<td>${f[0]=='status'?`<span class=tag>${esc(tx(f,r))}</span>`:esc(tx(f,r))}`).join('')}<td><button class="btn g s" onclick="op('${m}',${r.id})">${can('e')?'Editar':'Ver'}</button> ${can('d')?`<button class="btn g s" onclick="dl('${m}',${r.id})">Excluir</button>`:''}</tr>`).join('')||`<tr><td colspan=9 class=mut>Nada por aqui. Use “+ Novo” para cadastrar.</tr>`}</table></div>`}
+function fld(f,r){const[k,l,t,o,rq,fl]=f,v=r[k]??'',R=rq?' required':'';let i;
+if(t=='s')i=`<select name=${k}${R}>${rq?'':'<option></option>'}${o.map(x=>`<option${x==v?' selected':''}>${esc(x)}</option>`).join('')}</select>`;
+else if(t=='r')i=`<select name=${k}${R}${k=='vehicle'?' onchange="vf(this)"':''}><option value="">Selecionar…</option>${DB[o].filter(fl||(()=>1)).map(x=>`<option value=${x.id}${x.id==v?' selected':''}>${esc(LB[o](x))}</option>`).join('')}</select>`;
+else if(t=='a')i=`<textarea name=${k} rows=3${R}>${esc(v)}</textarea>`;
+else if(t=='c')i=`<input name=${k} readonly>`;
+else i=`<input name=${k} type="${t=='d'?'date':t=='n'||t=='m'?'number':t=='p'?'password':'text'}"${t=='n'||t=='m'?' step=any':''} value="${t=='p'?'':esc(v)}"${R}>`;
+return`<div class="${t=='a'?'wide':''}"><label>${l}${rq?' *':''}</label>${i}</div>`}
+function vf(sel){const v=V(sel.value),f=sel.form,k=f.elements.kmOs||f.elements.kmF;if(v&&k&&!k.value)k.value=v.km}
+function cc(f,m){if(m=='orders')f.elements.total.value=fmt.m(+f.elements.labor.value+ +f.elements.partsV.value+ +f.elements.other.value-f.elements.disc.value);if(m=='fuelings')f.elements.total.value=fmt.m(f.elements.liters.value*f.elements.price.value)}
+function op(m,id){const s=ST[m],r=id?DB[m].find(x=>x.id==id):{},ro=id?!can('e'):!can('c');modal(`<form onsubmit="sv(event,'${m}',${id||0})" oninput="cc(this,'${m}')"><h3>${id?(ro?'Ver':'Editar'):'Novo'} — ${esc(s.t)}${m=='orders'&&id?' · OS-'+pad(id):''}</h3><fieldset class=fg ${ro?'disabled':''} style="margin-top:12px">${s.f.map(f=>fld(f,r)).join('')}</fieldset><div id=at></div><p style="margin-top:14px">${ro?'':'<button class=btn>Salvar</button> '}<button type=button class="btn g" onclick="$('#dlg').close()">Fechar</button></p></form>`);const f=$('#dlg form');cc(f,m);if(id)att(m,id)}
+async function sv(e,m,id){e.preventDefault();const s=ST[m],F=new FormData(e.target),old=id?DB[m].find(x=>x.id==id):null,r={};
+s.f.forEach(f=>{if(f[2]!='c')r[f[0]]=(F.get(f[0])??'').trim()});
+const kv=m=='vehicles'?r.km:(r.kmOs||r.kmF),cur=m=='vehicles'?(old&&old.km):(V(r.vehicle)||{}).km;
+if(cur&&kv!==''&&+kv<cur&&!await cf(`O KM informado (${fmt.n(kv)}) é menor que o último registrado (${fmt.n(cur)}). Confirmar mesmo assim?`))return;
+try{const j=await api(m+(id?'/'+id:''),{m:id?'PUT':'POST',b:JSON.stringify(r)});DB=j.db;$('#dlg').close();toast('Salvo com sucesso.');render()}catch(x){toast(x.message,1)}}
+async function dl(m,id){if(!await cf('Excluir este registro? Esta ação não pode ser desfeita.'))return;try{DB=(await api(m+'/'+id,{m:'DELETE'})).db;toast('Registro excluído.');render()}catch(x){toast(x.message,1)}}
+async function att(m,id){const h=$('#at');if(!h)return;try{const l=await api('attachments/'+m+'/'+id);h.innerHTML='<label>Anexos (PDF, JPG ou PNG, até 5 MB)</label>'+l.map(a=>`<p><a href="/api/files/${a.id}" target=_blank>${esc(a.name)}</a> <span class=mut>${fmt.n(Math.round(a.size/1024))} KB</span></p>`).join('')+(can('e')?`<input type=file accept=".pdf,.jpg,.jpeg,.png" onchange="up('${m}',${id},this)">`:'')}catch(x){}}
+async function up(m,id,i){const f=i.files[0];if(!f)return;try{const r=await fetch(`/api/attachments/${m}/${id}`,{method:'POST',headers:{'Content-Type':f.type,'X-Requested-With':'frotapro','X-Filename':encodeURIComponent(f.name)},body:f});if(!r.ok)throw new Error((await r.json()).error);toast('Arquivo anexado.');att(m,id)}catch(x){toast(x.message,1)}}
+function gs(q){q=q.toLowerCase();const o=$('#gr');if(q.length<2){o.hidden=1;return}let h='';for(const m in ST){if(m=='users'&&me.role!='Administrador')continue;DB[m].filter(r=>Object.entries(r).filter(e=>e[0]!='h').map(e=>e[1]).join(' ').toLowerCase().includes(q)||('os-'+pad(r.id)).includes(q)&&m=='orders').slice(0,4).forEach(r=>h+=`<a onclick="op('${m}',${r.id});$('#gr').hidden=1">${esc(ST[m].t)}: ${esc(r.plate||r.name||r.insurer||r.code||r.doc||r.desc||r.service||'#'+r.id)}</a>`)}o.innerHTML=h||'<a>Nenhum resultado.</a>';o.hidden=0}
+function bell(){const A=alerts();modal(`<h3>Notificações</h3>${A.map(a=>`<p><span class="${a.b?'bad':''}">${esc(a.t)}</span> · ${esc(a.x)} — ${a.m}</p>`).join('')||'<p class=mut>Sem notificações.</p>'}<button class=btn onclick="$('#dlg').close()">Fechar</button>`)}
+function cfg(){return`<h2>Configurações</h2><div class=card style="margin-top:12px"><p><button class="btn g" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme=='dark'?'light':'dark'">Alternar tema claro/escuro</button></p><p><button class="btn r" onclick="rst()">Restaurar dados de demonstração</button></p><p class=mut>Dados no banco SQLite do servidor, senhas com bcrypt, sessão em cookie HttpOnly e permissões validadas no back-end.</p></div>`}
+async function rst(){if(await cf('Apagar todos os dados e recarregar a demonstração?')){try{DB=(await api('reset',{m:'POST'})).db;toast('Dados restaurados.');go('dash')}catch(x){toast(x.message,1)}}}
+function audit(){return`<h2>Auditoria</h2><div class="card tw" style="margin-top:12px"><table><tr><th>Data/hora<th>Usuário<th>Ação</tr>${DB.audit.map(a=>`<tr><td>${a.at}<td>${esc(a.u)}<td>${esc(a.t)}</tr>`).join('')||'<tr><td colspan=3 class=mut>Nenhuma operação registrada ainda.</tr>'}</table></div>`}
+function go(k,n){location.hash='#/'+k;if(n)setTimeout(()=>op(k),50)}
+function tg(){const s=$('#sd');s.classList.toggle(innerWidth<800?'open':'hide')}
+function render(){if(!me)return;const k=(location.hash.slice(2)||'dash'),ok=NAV.some(n=>n[0]==k)&&!(k=='users'&&me.role!='Administrador');const K2=ok?k:'dash';
+$('#nv').innerHTML=NAV.filter(n=>n[0]!='users'||me.role=='Administrador').map(n=>`<a class="${n[0]==K2?'on':''}" onclick="go('${n[0]}');$('#sd').classList.remove('open')">${n[1]}</a>`).join('');
+$('#bc').textContent=alerts().length;$('#view').innerHTML=K2=='dash'?dash():K2=='costs'?costs():K2=='reports'?reports():K2=='audit'?audit():K2=='cfg'?cfg():lst(K2)}
+async function login(e){e.preventDefault();const le=$('#le');try{const em=$('#em').value.trim().toLowerCase(),j=await api('login',{m:'POST',b:JSON.stringify({email:em,password:$('#pw').value})});try{$('#rm').checked?localStorage.setItem(K+'_em',em):localStorage.removeItem(K+'_em')}catch(x){}le.textContent='';start(j)}catch(x){le.textContent=x.message}}
+function start(j){me=j.user;DB=j.db;$('#login').hidden=1;$('#app').hidden=0;$('#av').textContent=me.name[0];$('#un').textContent=me.name;$('#ur').textContent=me.role;render()}
+async function out(){try{await api('logout',{m:'POST'})}catch(x){}me=null;DB=null;$('#app').hidden=1;$('#login').hidden=0;$('#pw').value=''}
+addEventListener('hashchange',render);
+(async()=>{try{$('#em').value=localStorage.getItem(K+'_em')||'';$('#rm').checked=!!$('#em').value}catch(e){}try{start(await api('me'))}catch(e){}})();
+</script></body></html>
